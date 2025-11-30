@@ -29,7 +29,7 @@ jobs:
 
       - name: Cleanup stale state lock
         run: |
-          LOCK_PATH="gs://szakdolgozat-tfstate/notes-api/default.tflock"
+          LOCK_PATH="gs://wif-github-tfstate/notes-api/default.tflock"
           if gcloud storage ls "$LOCK_PATH" >/dev/null 2>&1; then
             echo "Deleting stale lock file..."
             gcloud storage rm "$LOCK_PATH"

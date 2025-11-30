@@ -54,7 +54,7 @@ jobs:
 
       - name: Ensure Terraform state bucket exists
         run: |
-          BUCKET="szakdolgozat-tfstate"
+          BUCKET="wif-github-tfstate"
           SA="szakdolgozat-terraform@${PROJECT_ID}.iam.gserviceaccount.com"
 
           echo "Checking if bucket $BUCKET exists..."

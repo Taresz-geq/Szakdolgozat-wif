@@ -9,7 +9,7 @@ terraform {
   }
 
    backend "gcs" {
-    bucket = "szakdolgozat-tfstate-gitlab-nowif"
+    bucket = "wif-github-tfstate-gitlab-nowif"
     prefix = "notes-api"
   }
 }
