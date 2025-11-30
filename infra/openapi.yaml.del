@@ -1,0 +1,67 @@
+swagger: "2.0"
+info:
+  title: Notes API
+  version: "1.0.0"
+schemes:
+  - https
+produces:
+  - application/json
+x-google-backend:
+  address: https://notes-api-buzunoj3pa-lm.a.run.app
+paths:
+  /notes:
+    get:
+      summary: "Get all notes"
+      operationId: getNotes
+      responses:
+        "200":
+          description: "OK"
+    post:
+      summary: "Create note"
+      operationId: createNote
+      responses:
+        "200":
+          description: "OK"
+
+  /notes/{id}:
+    get:
+      summary: "Get note by ID"
+      operationId: getNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+    put:
+      summary: "Update note"
+      operationId: updateNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+    delete:
+      summary: "Delete note"
+      operationId: deleteNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+
+  /docs:
+    get:
+      summary: "Swagger UI"
+      operationId: swaggerUI
+      responses:
+        "200":
+          description: "Swagger UI"
