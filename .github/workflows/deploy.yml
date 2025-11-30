@@ -2,6 +2,10 @@ name: Deploy Notes API
 
 on:
   workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+
 
 env:
   PROJECT_ID: ${{ secrets.TF_VAR_PROJECT_ID }}
