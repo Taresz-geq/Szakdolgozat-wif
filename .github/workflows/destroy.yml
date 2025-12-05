@@ -9,20 +9,27 @@ jobs:
     defaults:
       run:
         working-directory: infra
+
     env:
+      WORKLOAD_IDENTITY_PROVIDER: ""
+      SERVICE_ACCOUNT_EMAIL: ""
+      PROJECT_ID: ${{ secrets.TF_VAR_PROJECT_ID }}
+      REGION: ${{ secrets.TF_VAR_REGION }}
       TF_VAR_project_id: ${{ secrets.TF_VAR_PROJECT_ID }}
       TF_VAR_region: ${{ secrets.TF_VAR_REGION }}
       TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
-      PROJECT_ID: ${{ secrets.TF_VAR_PROJECT_ID }}
-      REGION: ${{ secrets.TF_VAR_REGION }}
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       - uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.TF_VAR_PROJECT_ID }}
+
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
@@ -31,35 +38,20 @@ jobs:
         run: |
           LOCK_PATH="gs://wif-github-tfstate/notes-api/default.tflock"
           if gcloud storage ls "$LOCK_PATH" >/dev/null 2>&1; then
-            echo "Deleting stale lock file..."
             gcloud storage rm "$LOCK_PATH"
-          else
-            echo "No stale lock found."
           fi
 
       - name: Terminate sessions and drop notesdb
         run: |
           INSTANCE="notes-instance"
           DB="notesdb"
-
-          # Get connection string for the instance
           CONN_NAME=$(gcloud sql instances describe "$INSTANCE" --project="$PROJECT_ID" --format="value(connectionName)")
-
-          # Start Cloud SQL Proxy in background
           wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
           ./cloud_sql_proxy -instances="$CONN_NAME"=tcp:5432 &
-
-          # Wait for proxy
           sleep 10
-
-          # Kill sessions
-          PGPASSWORD="${TF_VAR_db_password}" psql "host=127.0.0.1 user=postgres dbname=postgres sslmode=disable" -c \
-            "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${DB}';"
-
-          # Drop database if exists
-          PGPASSWORD="${TF_VAR_db_password}" psql "host=127.0.0.1 user=postgres dbname=postgres sslmode=disable" -c \
-            "DROP DATABASE IF EXISTS ${DB};"
+          PGPASSWORD="${TF_VAR_db_password}" psql "host=127.0.0.1 user=postgres dbname=postgres sslmode=disable" -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${DB}';"
+          PGPASSWORD="${TF_VAR_db_password}" psql "host=127.0.0.1 user=postgres dbname=postgres sslmode=disable" -c "DROP DATABASE IF EXISTS ${DB};"
 
       - run: terraform init -input=false
       - run: terraform destroy -auto-approve
