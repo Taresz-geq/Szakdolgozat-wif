@@ -6,7 +6,7 @@ A small note‑taking REST API you can run locally with Docker Compose and deplo
 ## Architecture
 
 
-![Architecture diagram](./KLM-homework.drawio.png)
+![Architecture diagram](./architecture.png)
 
 ---
 ## TL;DR
@@ -36,7 +36,7 @@ A small note‑taking REST API you can run locally with Docker Compose and deplo
 ## Project structure
 
 ```text
-klm-homework/
+szakdoga kód/
 ├─ .github/
 │ └─ workflows/
 ├─ app/
@@ -120,14 +120,14 @@ klm-homework/
 1. **Build locally** (from repo root)
 
 ```bash
-cd klm-homework
+cd szakdoga kód
 docker build -t notes-api:local .
 ```
 
 2. **Run API + DB with Docker Compose** (from repo root)
 
 ```bash
-cd klm-homework
+cd szakdoga kód
 docker-compose up --build
 ```
 
@@ -137,7 +137,7 @@ App will be available at: [http://localhost:8000](http://localhost:8000)
    (Useful if pointing the app at Cloud SQL instead of local Postgres.)
 
 ```bash
-cd klm-homework
+cd szakdoga kód
 docker run -p 8000:8000 notes-api:local
 ```
 
@@ -198,7 +198,7 @@ curl -X DELETE http://localhost:8000/notes/1
 ```hcl
 terraform {
   backend "gcs" {
-    bucket = "homework-klm-tfstate"
+    bucket = " wif-github-tfstate"
     prefix = "notes-api"
   }
 }
